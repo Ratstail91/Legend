@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Wall
+  - Liftable
+  - Damager
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Background
+  - Characters
+  - Objects
+  - Foreground
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3320171869
+    locked: 0
+  - name: Walls
+    uniqueID: 483895027
+    locked: 0
+  - name: Characters
+    uniqueID: 2708321299
+    locked: 0
+  - name: Objects
+    uniqueID: 1795258893
+    locked: 0
+  - name: Foreground
+    uniqueID: 3808244987
+    locked: 0
