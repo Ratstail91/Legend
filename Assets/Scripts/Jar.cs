@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Jar : MonoBehaviour {
 	private Durability durability;
@@ -16,6 +14,12 @@ public class Jar : MonoBehaviour {
 	void Update () {
 		if (durability.healthPoints <= 0 ) {
 			Destroy (gameObject);
+		}
+	}
+
+	void OnCollisionEnter2D(Collision2D collision) {
+		if (collision.collider.gameObject.tag == "Damager") {
+			durability.healthPoints -= 1;
 		}
 	}
 }

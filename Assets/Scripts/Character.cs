@@ -1,17 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+
+//TODO: disable damage while attacking - 1 frame of immunity
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 public class Character : MonoBehaviour {
 	//public variables
-	private float speed;
-	private Vector2 deltaForce;
+	public GameObject swordDamage;
 
 	//internal variables
+	private float speed;
+	private Vector2 deltaForce;
 	private Vector2 lastDirection;
 	private bool isMoving = false;
+	private bool isAttacking = false;
 
 	//component references
 	private Rigidbody2D rigidBody;
@@ -34,6 +39,7 @@ public class Character : MonoBehaviour {
 		//run each routine in order
 		CheckInput ();
 		CalculateMovement (deltaForce * speed);
+		CalculateAttack ();
 		SendAnimationInfo ();
 	}
 
@@ -54,12 +60,40 @@ public class Character : MonoBehaviour {
 				lastDirection = rigidBody.velocity;
 			}
 		}
+
+		//if space pressed but not lifting or trying to lift, set attacking to true
+		Lifter lifter = GetComponent<Lifter> ();
+		isAttacking = false;
+		if (Input.GetKeyDown("space") && !lifter.GetIsLifting() && lifter.GetLiftableObject() == null) {
+			isAttacking = true;
+		}
 	}
 
 	void CalculateMovement(Vector2 force) {
 		//determine how to move the character
 		rigidBody.velocity = Vector2.zero;
 		rigidBody.AddForce (force, ForceMode2D.Impulse);
+	}
+
+	void CalculateAttack() {
+		//skip this if not attacking
+		if (!isAttacking) {
+			swordDamage.SetActive (false);
+			return;
+		}
+		swordDamage.SetActive (true);
+
+		//attack horizontal or vertical
+		Vector3 newPos = transform.position;
+		if (Math.Abs(lastDirection.x) > Math.Abs(lastDirection.y)) {
+			//extra conditionals for not-moving situation
+			newPos.x += 0.17f * (lastDirection.x > 0 ? 1 : -1);
+		}
+		else {
+			newPos.y += 0.17f * (lastDirection.y > 0 ? 1 : -1);
+		}
+
+		swordDamage.transform.position = newPos;
 	}
 
 	void SendAnimationInfo() {
@@ -69,6 +103,6 @@ public class Character : MonoBehaviour {
 		animator.SetFloat ("lastXSpeed", lastDirection.x);
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
 		animator.SetBool ("isMoving", isMoving);
-//		animator.SetBool ("isAttacking", isAttacking); //TODO
+		animator.SetBool ("isAttacking", isAttacking);
 	}
 }
