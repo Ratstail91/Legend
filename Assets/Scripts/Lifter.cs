@@ -82,4 +82,8 @@ public class Lifter : MonoBehaviour {
 	public bool GetIsLifting() {
 		return isLifting;
 	}
+
+	public GameObject GetLiftableObject() {
+		return liftableObject;
+	}
 }

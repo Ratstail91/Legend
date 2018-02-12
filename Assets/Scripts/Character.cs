@@ -8,7 +8,7 @@ public class Character : MonoBehaviour {
 	//public variables
 	public float speed;
 	public Vector2 deltaForce; //public for the lifter script
-	public GameObject swordPrefab = null;
+	public GameObject swordPrefab;
 
 	//internal variables
 	private Vector2 lastDirection;
@@ -53,8 +53,8 @@ public class Character : MonoBehaviour {
 			}
 		}
 
-		//if not lifting, then attack with the sword prefab
-		if (Input.GetKeyDown("space") && !GetComponent<Lifter>().GetIsLifting()) {
+		//if pressed space and not lifting, then attack with the sword prefab
+		if (Input.GetKeyDown("space") && !GetComponent<Lifter>().GetIsLifting() && GetComponent<Lifter>().GetLiftableObject() == null) {
 			Vector2 pos = rigidBody.transform.position;
 			GameObject newSword = Instantiate (swordPrefab, new Vector3 (pos.x, pos.y, 0), Quaternion.identity);
 			newSword.GetComponent<Sword> ().SendMessage ("SetDirection", deltaForce);
