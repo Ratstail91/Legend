@@ -51,7 +51,7 @@ public class Character : MonoBehaviour {
 		deltaForce = new Vector2 (horizontal, vertical);
 
 		//pass deltaForce to the lifter script
-		GetComponent<Lifter>().SetDeltaForce(deltaForce);
+		GetComponent<Lifter>().SetDeltaForce(lastDirection);
 		
 		isMoving = false;
 		if (deltaForce != Vector2.zero) {
