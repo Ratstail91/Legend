@@ -6,9 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Character : MonoBehaviour {
 	//public variables
-	public float speed;
-	public Vector2 deltaForce; //public for the lifter script
-	public GameObject swordPrefab;
+	private float speed;
+	private Vector2 deltaForce;
 
 	//internal variables
 	private Vector2 lastDirection;
@@ -44,6 +43,9 @@ public class Character : MonoBehaviour {
 		float vertical = Input.GetAxisRaw ("Vertical");
 		
 		deltaForce = new Vector2 (horizontal, vertical);
+
+		//pass deltaForce to the lifter script
+		GetComponent<Lifter>().SetDeltaForce(deltaForce);
 		
 		isMoving = false;
 		if (deltaForce != Vector2.zero) {
@@ -51,13 +53,6 @@ public class Character : MonoBehaviour {
 			if (!boxCollider.IsTouchingLayers(Physics.AllLayers)) { //TODO: learn more about this
 				lastDirection = rigidBody.velocity;
 			}
-		}
-
-		//if pressed space and not lifting, then attack with the sword prefab
-		if (Input.GetKeyDown("space") && !GetComponent<Lifter>().GetIsLifting() && GetComponent<Lifter>().GetLiftableObject() == null) {
-			Vector2 pos = rigidBody.transform.position;
-			GameObject newSword = Instantiate (swordPrefab, new Vector3 (pos.x, pos.y, 0), Quaternion.identity);
-			newSword.GetComponent<Sword> ().SendMessage ("SetDirection", deltaForce);
 		}
 	}
 
@@ -71,8 +66,9 @@ public class Character : MonoBehaviour {
 		//send the animation info to the animator
 		animator.SetFloat ("xSpeed", rigidBody.velocity.x);
 		animator.SetFloat ("ySpeed", rigidBody.velocity.y);
-		animator.SetFloat ("lastX", lastDirection.x);
-		animator.SetFloat ("lastY", lastDirection.y);
+		animator.SetFloat ("lastXSpeed", lastDirection.x);
+		animator.SetFloat ("lastYSpeed", lastDirection.y);
 		animator.SetBool ("isMoving", isMoving);
+//		animator.SetBool ("isAttacking", isAttacking); //TODO
 	}
 }

@@ -4,6 +4,7 @@
 public class Lifter : MonoBehaviour {
 	//the private variables
 	private bool isLifting = false;
+	private Vector2 deltaForce; //the direction that the liftableObject should be placed
 
 	//the reference to the liftable object
 	private GameObject liftableObject;
@@ -51,7 +52,7 @@ public class Lifter : MonoBehaviour {
 			liftableObject.GetComponent<Liftable> ().isLifted = false;
 
 			//correct placement of the liftable object
-			Vector2 placeForce = GetComponent<Character>().deltaForce * 0.1f; //hack into the character script; TODO: more generic please!
+			Vector2 placeForce = deltaForce * 0.1f; //hacked in from the character script
 			if (placeForce == Vector2.zero) {
 				//default to placing south of the character
 				placeForce.y = -0.1f;
@@ -72,8 +73,8 @@ public class Lifter : MonoBehaviour {
 
 	void CalculateMovement() {
 		//moving the lifted object
-		if (liftableObject != null && isLifting && liftableObject.GetComponent<Liftable>().isLifted) {
-			Vector2 carryPos = GetComponent<Rigidbody2D> ().position;
+		if (liftableObject != null && liftableObject.GetComponent<Liftable>().isLifted && isLifting) {
+			Vector2 carryPos = rigidBody.position;
 			carryPos.y += 0.2f; //carry on the character's head
 			liftableObject.GetComponent<Rigidbody2D> ().position = carryPos;
 		}
@@ -85,5 +86,9 @@ public class Lifter : MonoBehaviour {
 
 	public GameObject GetLiftableObject() {
 		return liftableObject;
+	}
+
+	public void SetDeltaForce(Vector2 v) {
+		deltaForce = v;
 	}
 }

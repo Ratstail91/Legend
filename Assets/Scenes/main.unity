@@ -441,13 +441,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1064493903}
   - component: {fileID: 1064493902}
-  - component: {fileID: 1064493901}
   - component: {fileID: 1064493900}
+  - component: {fileID: 1064493901}
   - component: {fileID: 1064493899}
   - component: {fileID: 1064493904}
   - component: {fileID: 1064493905}
   m_Layer: 10
-  m_Name: Bottle
+  m_Name: Jar
   m_TagString: Liftable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -700,7 +700,7 @@ Animator:
   m_GameObject: {fileID: 1488296585}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5dc96ce5a89accc4a8d51592196607f2, type: 2}
+  m_Controller: {fileID: 9100000, guid: b45bbfa5baef5834395a051c5c18eafb, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -742,7 +742,7 @@ SpriteRenderer:
   m_SortingLayerID: -1586645997
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 76499abc8987b4d4a961bf8ca9762799, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1cc7a101219bcf14ba88f4a653ce3146, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -796,10 +796,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f6759433c7e714b815d89f4acddcb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  deltaForce: {x: 0, y: 0}
-  swordPrefab: {fileID: 1638346581258354, guid: 2ce0f52e83b4cfd46a67c24e69cf89c2,
-    type: 2}
 --- !u!61 &1488296592
 BoxCollider2D:
   m_ObjectHideFlags: 0
