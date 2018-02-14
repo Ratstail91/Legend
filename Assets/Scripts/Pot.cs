@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 
-public class Jar : MonoBehaviour {
+[RequireComponent(typeof(Durability))]
+[RequireComponent(typeof(Liftable))]
+public class Pot : MonoBehaviour {
+	//components
 	private Durability durability;
+	private Liftable liftable;
 
 	void Start () {
 		durability = GetComponent<Durability> ();
+		liftable = GetComponent<Liftable> ();
 
-//		durability.SetOnDamaged ((dmg) => Debug.Log ("DMG: " + dmg.ToString ()));
 		durability.maxHealthPoints = 4;
 		durability.healthPoints = 4;
 	}
@@ -19,7 +23,8 @@ public class Jar : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision) {
 		if (collision.collider.gameObject.tag == "Damager") {
-			durability.healthPoints -= 1;
+			Damager dmgr = collision.collider.gameObject.GetComponent<Damager> ();
+			durability.healthPoints += dmgr.damageValue;
 		}
 	}
 }

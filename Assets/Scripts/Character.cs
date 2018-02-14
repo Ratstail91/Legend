@@ -7,9 +7,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Lifter))]
 public class Character : MonoBehaviour {
 	//public variables
-	public GameObject swordDamage;
+	public GameObject swordDamager;
 
 	//internal variables
 	private float speed;
@@ -22,12 +23,14 @@ public class Character : MonoBehaviour {
 	private Rigidbody2D rigidBody;
 	private Animator animator;
 	private BoxCollider2D boxCollider;
+	private Lifter lifter;
 
 	void Start() {
 		//get the components
 		rigidBody = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
 		boxCollider = GetComponent<BoxCollider2D> ();
+		lifter = GetComponent<Lifter> ();
 
 		//set up the internals
 		speed = 1.0f;
@@ -50,9 +53,7 @@ public class Character : MonoBehaviour {
 		
 		deltaForce = new Vector2 (horizontal, vertical);
 
-		//pass deltaForce to the lifter script
-		GetComponent<Lifter>().SetDeltaForce(lastDirection);
-		
+		//calculate last direction & isMoving
 		isMoving = false;
 		if (deltaForce != Vector2.zero) {
 			isMoving = true;
@@ -61,8 +62,10 @@ public class Character : MonoBehaviour {
 			}
 		}
 
+		//Lifter script needs the direction for placement
+		lifter.SetLastDirection(lastDirection);
+
 		//if space pressed but not lifting or trying to lift, set attacking to true
-		Lifter lifter = GetComponent<Lifter> ();
 		isAttacking = false;
 		if (Input.GetKeyDown("space") && !lifter.GetIsLifting() && lifter.GetLiftableObject() == null) {
 			isAttacking = true;
@@ -78,10 +81,10 @@ public class Character : MonoBehaviour {
 	void CalculateAttack() {
 		//skip this if not attacking
 		if (!isAttacking) {
-			swordDamage.SetActive (false);
+			swordDamager.SetActive (false);
 			return;
 		}
-		swordDamage.SetActive (true);
+		swordDamager.SetActive (true);
 
 		//attack horizontal or vertical
 		Vector3 newPos = transform.position;
@@ -93,7 +96,7 @@ public class Character : MonoBehaviour {
 			newPos.y += 0.17f * (lastDirection.y > 0 ? 1 : -1);
 		}
 
-		swordDamage.transform.position = newPos;
+		swordDamager.transform.position = newPos;
 	}
 
 	void SendAnimationInfo() {
