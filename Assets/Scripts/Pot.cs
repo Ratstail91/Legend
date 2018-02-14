@@ -1,21 +1,25 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Durability))]
-[RequireComponent(typeof(Liftable))]
 public class Pot : MonoBehaviour {
 	//components
+	private Rigidbody2D rigidBody;
 	private Durability durability;
-	private Liftable liftable;
 
 	void Start () {
+		rigidBody = GetComponent<Rigidbody2D> ();
 		durability = GetComponent<Durability> ();
-		liftable = GetComponent<Liftable> ();
 
 		durability.maxHealthPoints = 4;
 		durability.healthPoints = 4;
 	}
 	
 	void Update () {
+		//stop movement
+		rigidBody.velocity = Vector2.zero;
+
+		//handle destruction
 		if (durability.healthPoints <= 0 ) {
 			Destroy (gameObject);
 		}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class Lifter : MonoBehaviour {
 	//the private variables
 	private bool isLifting = false;
@@ -59,6 +60,8 @@ public class Lifter : MonoBehaviour {
 			}
 			//place in front of the lifter
 			liftableObject.GetComponent<Rigidbody2D> ().position = rigidBody.position + placeForce;
+			liftableObject.GetComponent<Rigidbody2D> ().velocity = Vector2.zero; //placed object is automatically still
+			liftableObject.GetComponent<Liftable> ().lastDirection = lastDirection;
 
 			//forget the object
 			liftableObject = null;
@@ -77,6 +80,7 @@ public class Lifter : MonoBehaviour {
 			Vector2 carryPos = rigidBody.position;
 			carryPos.y += 0.2f; //carry on the character's head
 			liftableObject.GetComponent<Rigidbody2D> ().position = carryPos;
+			liftableObject.GetComponent<Rigidbody2D> ().velocity = rigidBody.velocity; //turn the chicken's backside toward the camera
 		}
 	}
 
