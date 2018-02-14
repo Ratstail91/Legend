@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Durability))]
 public class Pot : MonoBehaviour {
 	//components
 	private Rigidbody2D rigidBody;

@@ -4,10 +4,6 @@ using UnityEngine;
 
 //TODO: disable damage while attacking - 1 frame of immunity
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Lifter))]
 public class Character : MonoBehaviour {
 	//public variables
 	public GameObject swordDamager;
