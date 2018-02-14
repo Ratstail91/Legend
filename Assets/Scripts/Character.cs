@@ -5,15 +5,15 @@ using UnityEngine;
 //TODO: disable damage while attacking - 1 frame of immunity
 
 public class Character : MonoBehaviour {
-	//public variables
-	public GameObject swordDamager;
-
 	//internal variables
 	private float speed;
 	private Vector2 deltaForce;
 	private Vector2 lastDirection;
 	private bool isMoving = false;
 	private bool isAttacking = false;
+
+	//child objects
+	private GameObject swordDamager;
 
 	//component references
 	private Rigidbody2D rigidBody;
@@ -28,10 +28,11 @@ public class Character : MonoBehaviour {
 		boxCollider = GetComponent<BoxCollider2D> ();
 		lifter = GetComponent<Lifter> ();
 
+		//get the sword
+		swordDamager = transform.GetChild(0).gameObject;
+
 		//set up the internals
 		speed = 1.0f;
-		rigidBody.gravityScale = 0;
-		rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
 	}
 
 	void Update() {
