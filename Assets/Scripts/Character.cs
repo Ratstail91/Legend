@@ -4,6 +4,9 @@ using UnityEngine;
 
 //TODO: disable damage while attacking - 1 frame of immunity
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class Character : MonoBehaviour {
 	//internal variables
 	private float speed;
@@ -54,9 +57,7 @@ public class Character : MonoBehaviour {
 		isMoving = false;
 		if (deltaForce != Vector2.zero) {
 			isMoving = true;
-			if (!boxCollider.IsTouchingLayers(Physics.AllLayers)) { //TODO: learn more about this
-				lastDirection = rigidBody.velocity;
-			}
+			lastDirection = rigidBody.velocity;
 		}
 
 		//Lifter script needs the direction for placement

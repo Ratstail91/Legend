@@ -31,7 +31,7 @@ public class Lifter : MonoBehaviour {
 		}
 
 		//find the liftable object
-		if (collision.gameObject.tag == "Liftable") {
+		if (collision.gameObject.GetComponent<Liftable> () != null) {
 			liftableObject = collision.gameObject;
 		}
 	}

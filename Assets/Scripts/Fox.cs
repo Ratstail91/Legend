@@ -1,6 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Destructable))]
+[RequireComponent(typeof(Durability))]
 public class Fox : MonoBehaviour {
 	//public structures
 	public enum Behaviour {
@@ -47,11 +52,6 @@ public class Fox : MonoBehaviour {
 	}
 
 	void Update() {
-		//handle destruction
-		if (durability.healthPoints <= 0 ) {
-			Destroy (gameObject);
-		}
-
 		HandleBehaviour ();
 
 		//if time interval and normal behaviour
@@ -68,10 +68,7 @@ public class Fox : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
-		if (collision.collider.gameObject.tag == "Damager") {
-			Damager dmgr = collision.collider.gameObject.GetComponent<Damager> ();
-			durability.healthPoints += dmgr.damageValue;
-
+		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
 			//TODO: fight
 		}
 	}

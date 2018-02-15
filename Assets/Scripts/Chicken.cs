@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Liftable))]
+[RequireComponent(typeof(Destructable))]
+[RequireComponent(typeof(Durability))]
 public class Chicken : MonoBehaviour {
 	//private structures
 	public enum Behaviour {
@@ -40,11 +45,6 @@ public class Chicken : MonoBehaviour {
 	}
 	
 	void Update () {
-		//handle destruction
-		if (durability.healthPoints <= 0 ) {
-			Destroy (gameObject);
-		}
-
 		HandleBehaviour ();
 
 		//if time interval and not lifted
@@ -59,10 +59,7 @@ public class Chicken : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
-		if (collision.collider.gameObject.tag == "Damager") {
-			Damager dmgr = collision.collider.gameObject.GetComponent<Damager> ();
-			durability.healthPoints += dmgr.damageValue;
-
+		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
 			//slight code duplication
 			behaviour = Behaviour.SCARED;
 			timeUntilCalm = 5.0f;
