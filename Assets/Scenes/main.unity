@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 189908591}
   m_Layer: 10
   m_Name: SwordDamager
-  m_TagString: Damager
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 680051731}
   m_Layer: 10
   m_Name: Block
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -514,9 +514,10 @@ GameObject:
   - component: {fileID: 925237387}
   - component: {fileID: 925237385}
   - component: {fileID: 925237386}
+  - component: {fileID: 925237388}
   m_Layer: 10
   m_Name: Chicken
-  m_TagString: Liftable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -677,6 +678,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeUntilCalm: 0
   behaviour: 0
+--- !u!114 &925237388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 925237379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af47c27125dab9e469a18971dfd1f5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1031682845
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,6 +703,7 @@ GameObject:
   - component: {fileID: 1031682850}
   - component: {fileID: 1031682849}
   - component: {fileID: 1031682852}
+  - component: {fileID: 1031682853}
   m_Layer: 10
   m_Name: Fox
   m_TagString: Untagged
@@ -840,6 +853,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387bdd9cf60432e4684fa4d1d082afce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1031682853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1031682845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af47c27125dab9e469a18971dfd1f5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1064493898
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,13 +877,25 @@ GameObject:
   - component: {fileID: 1064493901}
   - component: {fileID: 1064493904}
   - component: {fileID: 1064493905}
+  - component: {fileID: 1064493899}
   m_Layer: 10
   m_Name: Pot
-  m_TagString: Wall
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1064493899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1064493898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af47c27125dab9e469a18971dfd1f5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!50 &1064493900
 Rigidbody2D:
   serializedVersion: 4
@@ -1090,7 +1126,7 @@ GameObject:
   - component: {fileID: 1427121556}
   m_Layer: 10
   m_Name: BiteDamager
-  m_TagString: Damager
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
