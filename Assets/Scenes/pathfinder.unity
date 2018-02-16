@@ -472,11 +472,12 @@ MonoBehaviour:
     m_Bits: 256
   worldGridSize: {x: 30, y: 30}
   nodeRadius: 0.5
+  obsticleProximityPenalty: 50
   walkableRegions:
   - terrainMask:
       serializedVersion: 2
       m_Bits: 16
-    penalty: 5
+    penalty: 42
   displayGridGizmos: 1
 --- !u!4 &1842965492
 Transform:
