@@ -470,7 +470,7 @@ MonoBehaviour:
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 256
-  worldGridSize: {x: 30, y: 30}
+  worldGridSize: {x: 50, y: 50}
   nodeRadius: 0.5
   obsticleProximityPenalty: 50
   walkableRegions:
@@ -555,3 +555,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 455762693}
+  speed: 1
+  turnDistance: 0.5
