@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Node2D {
+public class Node2D : IHeapItem<Node2D> {
 	public bool walkable;
 	public Vector2 worldPosition;
 	public int gridX;
@@ -14,11 +14,26 @@ public class Node2D {
 		}
 	}
 	public Node2D parent;
+	private int index;
 
 	public Node2D(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY) {
 		walkable = _walkable;
 		worldPosition = _worldPos;
 		gridX = _gridX;
 		gridY = _gridY;
+	}
+
+	//interface stuff
+	public int heapIndex {
+		get { return index; }
+		set { index = value; }
+	}
+
+	public int CompareTo(Node2D other) {
+		int compare = fCost.CompareTo (other.fCost);
+		if (compare == 0) {
+			compare = hCost.CompareTo (other.hCost);
+		}
+		return -compare;
 	}
 }

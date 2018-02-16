@@ -21,7 +21,7 @@ public class Pathfinder2D : MonoBehaviour {
 		Node2D targetNode = nodeGrid.GetNode2DFromWorldPoint (targetPos);
 
 		//open and closed lists
-		List<Node2D> openNodes = new List<Node2D> ();
+		Heap<Node2D> openNodes = new Heap<Node2D> (nodeGrid.MaxSize);
 		HashSet<Node2D> closedNodes = new HashSet<Node2D> ();
 
 		//begin with the start node in the open list
@@ -29,15 +29,7 @@ public class Pathfinder2D : MonoBehaviour {
 
 		//find the open node with the lowest heuristic
 		while(openNodes.Count > 0) {
-			Node2D currentNode = openNodes [0];
-			for (int i = 1; i < openNodes.Count; i++) {
-				if (openNodes[i].fCost < currentNode.fCost || (openNodes[i].fCost == currentNode.fCost && openNodes[i].hCost < currentNode.hCost)) {
-					currentNode = openNodes [i];
-				}
-			}
-
-			//move that node to the closed list
-			openNodes.Remove (currentNode);
+			Node2D currentNode = openNodes.RemoveFirst ();
 			closedNodes.Add (currentNode);
 
 			//if found the target, return
@@ -59,6 +51,8 @@ public class Pathfinder2D : MonoBehaviour {
 
 					if (!openNodes.Contains(neighbourNode)) {
 						openNodes.Add (neighbourNode);
+					} else {
+						openNodes.UpdateItem (neighbourNode);
 					}
 				}
 			}

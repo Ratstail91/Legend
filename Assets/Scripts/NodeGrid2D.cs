@@ -21,6 +21,12 @@ public class NodeGrid2D : MonoBehaviour {
 		CreateGrid ();
 	}
 
+	public int MaxSize {
+		get {
+			return gridSizeX * gridSizeY;
+		}
+	}
+
 	public List<Node2D> path;
 	void OnDrawGizmos() {
 		Gizmos.DrawWireCube (transform.position, new Vector3 (worldGridSize.x, worldGridSize.y, 1));
