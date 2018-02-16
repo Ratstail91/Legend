@@ -5,6 +5,7 @@ public class Node2D : IHeapItem<Node2D> {
 	public Vector2 worldPosition;
 	public int gridX;
 	public int gridY;
+	public int penalty;
 
 	public int gCost;
 	public int hCost;
@@ -16,11 +17,12 @@ public class Node2D : IHeapItem<Node2D> {
 	public Node2D parent;
 	private int index;
 
-	public Node2D(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY) {
+	public Node2D(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY, int _penalty) {
 		walkable = _walkable;
 		worldPosition = _worldPos;
 		gridX = _gridX;
 		gridY = _gridY;
+		penalty = _penalty;
 	}
 
 	//interface stuff

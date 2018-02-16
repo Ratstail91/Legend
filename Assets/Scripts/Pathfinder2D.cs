@@ -51,7 +51,7 @@ public class Pathfinder2D : MonoBehaviour {
 						continue;
 					}
 
-					int movementCostToNeighbour = currentNode.gCost + GetDistance (currentNode, neighbourNode);
+					int movementCostToNeighbour = currentNode.gCost + GetDistance (currentNode, neighbourNode) + neighbourNode.penalty;
 					if (movementCostToNeighbour < neighbourNode.gCost || !openNodes.Contains (neighbourNode)) {
 						neighbourNode.gCost = movementCostToNeighbour;
 						neighbourNode.hCost = GetDistance (neighbourNode, targetNode);

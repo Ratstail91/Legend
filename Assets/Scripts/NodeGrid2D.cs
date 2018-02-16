@@ -8,8 +8,11 @@ public class NodeGrid2D : MonoBehaviour {
 	public LayerMask unwalkableMask;
 	public Vector2 worldGridSize; //real size of the grid
 	public float nodeRadius;
+	public TerrainType[] walkableRegions;
+	Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int> (); //optimization
 
 	//private members
+	LayerMask walkableMask;
 	Node2D[,] grid;
 	float nodeDiameter;
 	int gridSizeX, gridSizeY; //the number of nodes stored on an axis
@@ -18,6 +21,12 @@ public class NodeGrid2D : MonoBehaviour {
 		nodeDiameter = nodeRadius * 2;
 		gridSizeX = Mathf.RoundToInt(worldGridSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(worldGridSize.y / nodeDiameter);
+
+		foreach(TerrainType region in walkableRegions) {
+			walkableMask.value |= region.terrainMask.value;
+			walkableRegionsDictionary.Add ((int)Mathf.Log(region.terrainMask.value, 2), region.penalty);
+		}
+
 		CreateGrid ();
 	}
 
@@ -61,7 +70,16 @@ public class NodeGrid2D : MonoBehaviour {
 				Vector2 worldPoint = worldBottomLeft + Vector2.right * (i * nodeDiameter + nodeRadius) + Vector2.up * (j * nodeDiameter + nodeRadius);
 				bool walkable = !(Physics2D.OverlapCircle (worldPoint, nodeRadius, unwalkableMask));
 
-				grid [i, j] = new Node2D (walkable, worldPoint, i, j);
+				int movementPenalty = 0;
+
+				if (walkable) {
+					RaycastHit2D hit = Physics2D.Raycast (worldPoint, Vector2.zero, 0, walkableMask);
+					if (hit != null && hit.collider != null) {
+						walkableRegionsDictionary.TryGetValue (hit.collider.gameObject.layer, out movementPenalty);
+					}
+				}
+
+				grid [i, j] = new Node2D (walkable, worldPoint, i, j, movementPenalty);
 			}
 		}
 	}
@@ -86,5 +104,11 @@ public class NodeGrid2D : MonoBehaviour {
 			}
 		}
 		return neighbours;
+	}
+
+	[System.Serializable]
+	public class TerrainType {
+		public LayerMask terrainMask;
+		public int penalty;
 	}
 }
