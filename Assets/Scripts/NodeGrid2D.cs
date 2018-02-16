@@ -14,7 +14,7 @@ public class NodeGrid2D : MonoBehaviour {
 	float nodeDiameter;
 	int gridSizeX, gridSizeY; //the number of nodes stored on an axis
 
-	void Start() {
+	void Awake() {
 		nodeDiameter = nodeRadius * 2;
 		gridSizeX = Mathf.RoundToInt(worldGridSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(worldGridSize.y / nodeDiameter);
@@ -27,16 +27,13 @@ public class NodeGrid2D : MonoBehaviour {
 		}
 	}
 
-	public List<Node2D> path;
+	public bool displayGridGizmos = true;
 	void OnDrawGizmos() {
 		Gizmos.DrawWireCube (transform.position, new Vector3 (worldGridSize.x, worldGridSize.y, 1));
-		if (grid != null) {
+		if (grid != null && displayGridGizmos) {
 			foreach(Node2D n in grid) {
 				Gizmos.color = (n.walkable ? Color.white : Color.red);
-				if (path != null && path.Contains(n)) {
-					Gizmos.color = Color.black;
-				}
-				Gizmos.DrawCube (new Vector3(n.worldPosition.x, n.worldPosition.y, 1), Vector3.one * (nodeDiameter - 0.1f));
+				Gizmos.DrawCube (new Vector3(n.worldPosition.x, n.worldPosition.y, 1), Vector3.one * (nodeDiameter - 0.8f));
 			}
 		}
 	}
