@@ -30,7 +30,7 @@ public class Chicken : MonoBehaviour {
 	Liftable liftable;
 	Durability durability;
 
-	void Start () {
+	void Awake () {
 		rigidBody = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
 		liftable = GetComponent<Liftable> ();
@@ -42,6 +42,14 @@ public class Chicken : MonoBehaviour {
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 3;
 		durability.healthPoints = 3;
+
+
+		//DEBUG: scatter
+		transform.position = new Vector3 (
+			transform.position.x + (float)randomEngine.Rand (2) - 1f,
+			transform.position.y + (float)randomEngine.Rand (2) - 1f,
+			0f
+		);
 	}
 	
 	void Update () {

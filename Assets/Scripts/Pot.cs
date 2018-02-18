@@ -8,7 +8,7 @@ public class Pot : MonoBehaviour {
 	private Rigidbody2D rigidBody;
 	private Durability durability;
 
-	void Start () {
+	void Awake () {
 		rigidBody = GetComponent<Rigidbody2D> ();
 		durability = GetComponent<Durability> ();
 

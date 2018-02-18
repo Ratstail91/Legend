@@ -24,7 +24,7 @@ public class Character : MonoBehaviour {
 	private BoxCollider2D boxCollider;
 	private Lifter lifter;
 
-	void Start() {
+	void Awake() {
 		//get the components
 		rigidBody = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
