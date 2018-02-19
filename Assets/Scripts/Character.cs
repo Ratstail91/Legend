@@ -65,7 +65,7 @@ public class Character : MonoBehaviour {
 
 		//if space pressed but not lifting or trying to lift, set attacking to true
 		isAttacking = false;
-		if (Input.GetKeyDown("space") && !lifter.GetIsLifting() && lifter.GetLiftableObject() == null) {
+		if (Input.GetKeyDown("space")) {
 			isAttacking = true;
 		}
 	}
