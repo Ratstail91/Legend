@@ -2,7 +2,16 @@
 
 [RequireComponent(typeof(Durability))]
 public class Destructable : MonoBehaviour {
+	//components
 	Durability durability;
+
+	//internal stuff
+	public delegate void OnDestruction();
+	public OnDestruction onDestruction {
+		get { return onDestructionCallback; }
+		set { onDestructionCallback = value; }
+	}
+	OnDestruction onDestructionCallback;
 
 	// Use this for initialization
 	void Start () {
@@ -13,6 +22,9 @@ public class Destructable : MonoBehaviour {
 	void Update () {
 		//handle destruction
 		if (durability.healthPoints <= 0 ) {
+			if (onDestruction != null) {
+				onDestruction (); //callback
+			}
 			Destroy (gameObject);
 		}
 	}

@@ -26,6 +26,7 @@ public class Fox : MonoBehaviour {
 	private bool isAttacking = false;
 	public float huntDistance; //public for the inspector
 	public float biteDistance; //public for the inspector
+	GameObject fightingTarget;
 
 	//child members
 	private GameObject biteDamager;
@@ -82,33 +83,58 @@ public class Fox : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
-//		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
-//			//TODO: fight
-//		}
+		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
+			//is attacked, start fighting back
+			behaviour = Behaviour.FIGHTING;
+			fightingTarget = collision.gameObject;
+		}
 	}
 
 	void HandleBehaviour() {
-		//if there's a chicken within a certain distance
-		Vector2 closest = FindClosestChicken ();
+		//get this pos
 		Vector2 thisPos = new Vector2 (transform.position.x, transform.position.y);
 
-		behaviour = Vector2.Distance(closest, thisPos) < huntDistance ? Behaviour.HUNTING : Behaviour.NORMAL;
+		//used for chickens
+		Vector2 closest;
 
 		switch(behaviour) {
 		case Behaviour.NORMAL:
 			actionTime = 2.5f;
 			pathUnit.speed = 0.2f;
 			isAttacking = false;
+
+			//if there's a chicken within a certain distance (code duplication)
+			closest = FindClosestChicken ();
+			behaviour = Vector2.Distance(closest, thisPos) < huntDistance ? Behaviour.HUNTING : Behaviour.NORMAL;
+
 			break;
+
 		case Behaviour.HUNTING:
 			actionTime = 0.5f;
 			pathUnit.speed = 0.4f;
 
+			//if there's a chicken within a certain distance (code duplication)
+			closest = FindClosestChicken ();
+			behaviour = Vector2.Distance(closest, thisPos) < huntDistance ? Behaviour.HUNTING : Behaviour.NORMAL;
+
 			isAttacking = !isAttacking && Vector2.Distance(closest, thisPos) < biteDistance;
 
 			break;
+
 		case Behaviour.FIGHTING:
-			//TODO
+			//if the target is dead, calm down
+			if (fightingTarget == null) {
+				behaviour = Behaviour.NORMAL;
+				break;
+			}
+
+			actionTime = 0.5f;
+			pathUnit.speed = 0.4f;
+
+			Vector2 targetPos = new Vector2 (fightingTarget.transform.position.x, fightingTarget.transform.position.y);
+
+			isAttacking = !isAttacking && Vector2.Distance(targetPos, thisPos) < biteDistance;
+
 			break;
 		}
 	}
@@ -145,7 +171,6 @@ public class Fox : MonoBehaviour {
 
 			//found nothing
 			if (closest == Vector2.positiveInfinity) {
-				behaviour = Behaviour.NORMAL;
 				break;
 			}
 
@@ -155,7 +180,15 @@ public class Fox : MonoBehaviour {
 			break;
 
 		case Behaviour.FIGHTING:
-//			//TODO: fighting behaviour
+			//if the target is dead, calm down
+			if (fightingTarget == null) {
+				break;
+			}
+
+			Vector2 targetPos = new Vector2 (fightingTarget.transform.position.x, fightingTarget.transform.position.y);
+
+			//pass the movement to the pathfinding code
+			pathUnit.FollowPathToPoint (targetPos);
 			break;
 		}
 	}
@@ -201,10 +234,9 @@ public class Fox : MonoBehaviour {
 		//boxCollider up & down:    0.07 x 0.15
 		//boxCollider left & right: 0.31 x 0.15
 
-		if (lastDirection.y != 0) {
+		if (Mathf.Abs(lastDirection.y) > Mathf.Abs(lastDirection.x)) {
 			boxCollider.size = new Vector2 (0.07f, 0.15f);
-		}
-		else if (lastDirection.x != 0) {
+		} else {
 			boxCollider.size = new Vector2 (0.31f, 0.15f);
 		}
 

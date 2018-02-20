@@ -5,43 +5,53 @@ using UnityEngine;
 //TODO: disable damage while attacking - 1 frame of immunity
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Destructable))]
+[RequireComponent(typeof(Durability))]
+[RequireComponent(typeof(Lifter))]
+[RequireComponent(typeof(Rigidbody2D))]
+
 public class Character : MonoBehaviour {
 	//internal variables
-	private float speed;
-	private Vector2 deltaForce;
-	private Vector2 lastDirection;
-	private bool isMoving = false;
-	private bool isAttacking = false;
+	float speed;
+	Vector2 deltaForce;
+	Vector2 lastDirection;
+	bool isMoving = false;
+	bool isAttacking = false;
 
 	//child objects
-	private GameObject swordDamager;
+	GameObject swordDamager;
 
 	//component references
-	private Rigidbody2D rigidBody;
-	private Animator animator;
-	private BoxCollider2D boxCollider;
-	private Lifter lifter;
+	Animator animator;
+	BoxCollider2D boxCollider;
+	Destructable destructable;
+	Durability durability;
+	Lifter lifter;
+	Rigidbody2D rigidBody;
 
 	void Awake() {
 		//get the components
-		rigidBody = GetComponent<Rigidbody2D> ();
 		animator = GetComponent<Animator> ();
 		boxCollider = GetComponent<BoxCollider2D> ();
+		destructable = GetComponent<Destructable> ();
+		durability = GetComponent<Durability> ();
 		lifter = GetComponent<Lifter> ();
+		rigidBody = GetComponent<Rigidbody2D> ();
 
 		//get the sword
 		swordDamager = transform.GetChild(0).gameObject;
 
 		//set up the internals
 		speed = 1.0f;
+		durability.maxHealthPoints = 12;
+		durability.healthPoints = 12;
 	}
 
 	void Update() {
 		//run each routine in order
 		CheckInput ();
-		CalculateMovement (deltaForce * speed);
+		Move ();
 		CalculateAttack ();
 		SendAnimationInfo ();
 	}
@@ -70,10 +80,10 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	void CalculateMovement(Vector2 force) {
+	void Move() {
 		//determine how to move the character
 		rigidBody.velocity = Vector2.zero;
-		rigidBody.AddForce (force, ForceMode2D.Impulse);
+		rigidBody.AddForce (deltaForce * speed, ForceMode2D.Impulse);
 	}
 
 	void CalculateAttack() {
@@ -103,7 +113,7 @@ public class Character : MonoBehaviour {
 		animator.SetFloat ("ySpeed", rigidBody.velocity.y);
 		animator.SetFloat ("lastXSpeed", lastDirection.x);
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
-		animator.SetBool ("isMoving", isMoving);
+		animator.SetBool ("isMoving", isMoving); //TODO: remove this from the animation system
 		animator.SetBool ("isAttacking", isAttacking);
 	}
 }

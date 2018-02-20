@@ -54,6 +54,10 @@ public class Chicken : MonoBehaviour {
 			transform.position.y + (float)randomEngine.Rand (2) - 1f,
 			0f
 		);
+
+		destructable.onDestruction = () => {
+			Debug.Log ("Oh, what a world!");
+		};
 	}
 	
 	void Update () {
