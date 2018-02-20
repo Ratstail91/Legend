@@ -8,7 +8,7 @@ public class NodeGrid2D : MonoBehaviour {
 	public LayerMask unwalkableMask;
 	public Vector2 worldGridSize; //real size of the grid
 	public float nodeRadius;
-	public int obsticleProximityPenalty = 50;
+	public int obsticleProximityPenalty;
 	public TerrainType[] walkableRegions;
 	Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int> (); //optimization
 
@@ -78,7 +78,7 @@ public class NodeGrid2D : MonoBehaviour {
 				int movementPenalty = 0;
 
 				RaycastHit2D hit = Physics2D.Raycast (worldPoint, Vector2.zero, 0, walkableMask);
-				if (hit != null && hit.collider != null) {
+				if (hit.collider != null) {
 					walkableRegionsDictionary.TryGetValue (hit.collider.gameObject.layer, out movementPenalty);
 				}
 

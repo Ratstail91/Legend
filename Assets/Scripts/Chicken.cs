@@ -3,46 +3,50 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Liftable))]
 [RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
+[RequireComponent(typeof(Liftable))]
+[RequireComponent(typeof(Rigidbody2D))]
+
 public class Chicken : MonoBehaviour {
 	//private structures
-	public enum Behaviour {
+	private enum Behaviour {
 		NORMAL,
 		SCARED,
 		LIFTED
-	};
+	}
 	private RandomEngine randomEngine;
 
 	//private members
+	private Behaviour behaviour;
 	private float lastTime;
 	private float actionTime;
-	public float timeUntilCalm;
+
+	private float timeUntilCalm;
 	private Vector2 movement;
 	private float speed;
-	public Behaviour behaviour;
 
 	//component members
-	Rigidbody2D rigidBody;
 	Animator animator;
-	Liftable liftable;
+	Destructable destructable;
 	Durability durability;
+	Liftable liftable;
+	Rigidbody2D rigidBody;
 
 	void Awake () {
-		rigidBody = GetComponent<Rigidbody2D> ();
-		animator = GetComponent<Animator> ();
-		liftable = GetComponent<Liftable> ();
-		durability = GetComponent<Durability> ();
+		//get components
 		randomEngine = new RandomEngine ();
+		animator = GetComponent<Animator> ();
+		destructable = GetComponent<Destructable> ();
+		durability = GetComponent<Durability> ();
+		liftable = GetComponent<Liftable> ();
+		rigidBody = GetComponent<Rigidbody2D> ();
 
 		//internal stuff
 		lastTime = Time.time;
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 3;
 		durability.healthPoints = 3;
-
 
 		//DEBUG: scatter
 		transform.position = new Vector3 (
@@ -57,7 +61,7 @@ public class Chicken : MonoBehaviour {
 
 		//if time interval and not lifted
 		if (lastTime + actionTime < Time.time && behaviour != Behaviour.LIFTED) {
-			RandomizeMovement (speed);
+			CalculateMovement ();
 			lastTime = Time.time;
 		}
 
@@ -73,6 +77,20 @@ public class Chicken : MonoBehaviour {
 			timeUntilCalm = 5.0f;
 			actionTime = 1.0f;
 			speed = 1.2f;
+
+			//run AWAY
+			Vector3 otherPos3 = collision.collider.gameObject.transform.position;
+			Vector2 otherPos = new Vector2 (otherPos3.x, otherPos3.y);
+			Vector2 direction = new Vector2 (transform.position.x, transform.position.y) - otherPos;
+			//similar to deltaForce
+			if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) {
+				direction.x = direction.x > 0 ? 1 : -1;
+				direction.y = 0;
+			} else {
+				direction.x = 0;
+				direction.y = direction.y > 0 ? 1 : -1;
+			}
+			movement = direction * speed;
 		}
 	}
 
@@ -99,7 +117,7 @@ public class Chicken : MonoBehaviour {
 				lastTime = Time.time;
 				speed = 0.1f;
 
-				RandomizeMovement (speed);
+				CalculateMovement ();
 			}
 		}
 		else if (behaviour == Behaviour.NORMAL) {
@@ -109,7 +127,7 @@ public class Chicken : MonoBehaviour {
 		}
 	}
 
-	void RandomizeMovement(float speed) {
+	void CalculateMovement() {
 		Vector2 deltaForce = new Vector2 (0, 0);
 
 		int direction = (int)randomEngine.Rand(5.0);

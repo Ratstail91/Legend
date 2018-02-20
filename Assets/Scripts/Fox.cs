@@ -2,46 +2,53 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Unit2D))]
+
 public class Fox : MonoBehaviour {
-	//public structures
-	public enum Behaviour {
+	//interface structures
+	private enum Behaviour {
 		NORMAL,
 		HUNTING,
 		FIGHTING
-	};
+	}
 	private RandomEngine randomEngine;
 
 	//private members
+	private Behaviour behaviour;
 	private float lastTime;
 	private float actionTime;
+
 	private Vector2 lastDirection;
-	private Behaviour behaviour;
 	private bool isAttacking = false;
+	public float huntDistance; //public for the inspector
+	public float biteDistance; //public for the inspector
 
 	//child members
 	private GameObject biteDamager;
 
 	//components
 	Animator animator;
-	Rigidbody2D rigidBody;
 	BoxCollider2D boxCollider;
+	Destructable destructable;
 	Durability durability;
+	Rigidbody2D rigidBody;
 	Unit2D pathUnit;
 
 	void Awake() {
 		//get components
-		animator = GetComponent<Animator> ();
-		rigidBody = GetComponent<Rigidbody2D> ();
-		boxCollider = GetComponent<BoxCollider2D> ();
-		durability = GetComponent<Durability> ();
-		pathUnit = GetComponent<Unit2D> ();
 		randomEngine = new RandomEngine ();
+		animator = GetComponent<Animator> ();
+		boxCollider = GetComponent<BoxCollider2D> ();
+		destructable = GetComponent<Destructable> ();
+		durability = GetComponent<Durability> ();
+		rigidBody = GetComponent<Rigidbody2D> ();
+		pathUnit = GetComponent<Unit2D> ();
 
-		//get the biter
+		//get the children
 		biteDamager = transform.GetChild(0).gameObject;
 
 		//internal stuff
@@ -60,41 +67,45 @@ public class Fox : MonoBehaviour {
 			lastTime = Time.time;
 		}
 
-		if (behaviour == Behaviour.NORMAL) {
-			//force move if not following path
-			pathUnit.Move();
-		}
+		Move ();
 
 		//animation
 		if (pathUnit.movement != Vector2.zero) {
 			lastDirection = pathUnit.movement;
 		}
 
+		//custom fox stuff
 		CalculateAttack ();
-		UpdateBoxCollider ();
+		UpdateBoxColliders ();
 
 		SendAnimationInfo ();
 	}
 
-//	void OnCollisionEnter2D(Collision2D collision) {
+	void OnCollisionEnter2D(Collision2D collision) {
 //		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
 //			//TODO: fight
 //		}
-//	}
+	}
 
 	void HandleBehaviour() {
-		//if there's a chicken within 10 units
-		Vector3 closest = FindClosestChicken ();
-		behaviour = Vector2.Distance(closest, new Vector2(transform.position.x, transform.position.y)) < 10 ? Behaviour.HUNTING : Behaviour.NORMAL;
+		//if there's a chicken within a certain distance
+		Vector2 closest = FindClosestChicken ();
+		Vector2 thisPos = new Vector2 (transform.position.x, transform.position.y);
+
+		behaviour = Vector2.Distance(closest, thisPos) < huntDistance ? Behaviour.HUNTING : Behaviour.NORMAL;
 
 		switch(behaviour) {
 		case Behaviour.NORMAL:
 			actionTime = 2.5f;
 			pathUnit.speed = 0.2f;
+			isAttacking = false;
 			break;
 		case Behaviour.HUNTING:
 			actionTime = 0.5f;
 			pathUnit.speed = 0.4f;
+
+			isAttacking = !isAttacking && Vector2.Distance(closest, thisPos) < biteDistance;
+
 			break;
 		case Behaviour.FIGHTING:
 			//TODO
@@ -124,7 +135,7 @@ public class Fox : MonoBehaviour {
 			case 4:
 				deltaForce = new Vector2 (0, -1);
 				break;
-			//		case 0 = force 0
+//			case 0 = force 0
 			}
 			pathUnit.movement = deltaForce * pathUnit.speed;
 			break;
@@ -141,19 +152,32 @@ public class Fox : MonoBehaviour {
 			//pass the movement to the pathfinding code
 			pathUnit.FollowPathToPoint (closest);
 
-			isAttacking = !isAttacking && Vector2.Distance(new Vector2(transform.position.x, transform.position.y), closest) < 0.3f;
-
 			break;
 
-//		case Behaviour.FIGHTING:
+		case Behaviour.FIGHTING:
 //			//TODO: fighting behaviour
-//			break;
+			break;
 		}
 	}
 
-	void CalculateAttack () {
-		//TODO: distance to chicken
+	void Move() {
+		if (behaviour == Behaviour.NORMAL) {
+			//force move if not following path
+			pathUnit.Move();
+		}
+	}
 
+	void SendAnimationInfo() {
+		//send the animation info to the animator
+		animator.SetFloat ("xSpeed", pathUnit.movement.x);
+		animator.SetFloat ("ySpeed", pathUnit.movement.y);
+		animator.SetFloat ("lastXSpeed", lastDirection.x);
+		animator.SetFloat ("lastYSpeed", lastDirection.y);
+	}
+
+	//custom stuff below this line
+
+	void CalculateAttack () {
 		if (!isAttacking) {
 			biteDamager.SetActive (false);
 			return;
@@ -173,9 +197,9 @@ public class Fox : MonoBehaviour {
 		biteDamager.transform.position = newPos;
 	}
 
-	void UpdateBoxCollider () {
-		//boxCollider up & down: 0.07 * 0.15
-		//boxCollider left & right: 0.31 * 0.15
+	void UpdateBoxColliders () {
+		//boxCollider up & down:    0.07 x 0.15
+		//boxCollider left & right: 0.31 x 0.15
 
 		if (lastDirection.y != 0) {
 			boxCollider.size = new Vector2 (0.07f, 0.15f);
@@ -186,14 +210,6 @@ public class Fox : MonoBehaviour {
 
 		//update the biter
 		biteDamager.GetComponent<BoxCollider2D> ().size = boxCollider.size;
-	}
-
-	void SendAnimationInfo() {
-		//send the animation info to the animator
-		animator.SetFloat ("xSpeed", pathUnit.movement.x);
-		animator.SetFloat ("ySpeed", pathUnit.movement.y);
-		animator.SetFloat ("lastXSpeed", lastDirection.x);
-		animator.SetFloat ("lastYSpeed", lastDirection.y);
 	}
 
 	Vector2 FindClosestChicken() {

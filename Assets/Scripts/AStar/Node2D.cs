@@ -15,6 +15,7 @@ public class Node2D : IHeapItem<Node2D> {
 		}
 	}
 	public Node2D parent;
+
 	private int index;
 
 	public Node2D(bool _walkable, Vector2 _worldPos, int _gridX, int _gridY, int _penalty) {
