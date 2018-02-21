@@ -34,8 +34,8 @@ public class Life_Bar : MonoBehaviour {
 			Debug.LogError ("Durability.maxHealthPoints is not a multiple of 4");
 		}
 
-		durability.SetOnDamaged (UpdateGraphics);
-		durability.SetOnHealed (UpdateGraphics);
+		durability.onDamaged = UpdateGraphics;
+		durability.onHealed = UpdateGraphics;
 	}
 
 	//callback

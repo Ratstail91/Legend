@@ -5,23 +5,33 @@ public class Durability : MonoBehaviour {
 	//the important stuff
 	private int health;
 	private int maxHealth;
-	private Action<int> onDamaged;
-	private Action<int> onHealed;
+	private Action<int> onDamagedCallback;
+	private Action<int> onHealedCallback;
 
-	//accessors
+	//accessors &  mutators
 	public int healthPoints {
 		get { return health; }
 		set {
 			int diff = value - health; //diff < 0 means loss of life
-			if (diff < 0 && onDamaged != null) {
-				onDamaged (diff);
+			if (diff < 0 && onDamagedCallback != null) {
+				onDamagedCallback (diff);
 			}
-			if (diff > 0 && onHealed != null) {
-				onHealed (diff);
+			if (diff > 0 && onHealedCallback != null) {
+				onHealedCallback (diff);
 			}
 			health = value;
 			ClampHealth ();
 		}
+	}
+
+	public Action<int> onDamaged {
+		get { return onDamagedCallback; }
+		set { onDamagedCallback = value; }
+	}
+
+	public Action<int> onHealed {
+		get { return onHealedCallback; }
+		set { onHealedCallback = value; }
 	}
 
 	public int maxHealthPoints {
@@ -43,13 +53,5 @@ public class Durability : MonoBehaviour {
 		if (health > maxHealth) {
 			health = maxHealth;
 		}
-	}
-
-	public void SetOnDamaged(Action<int> f) {
-		onDamaged = f;
-	}
-
-	public void SetOnHealed(Action<int> f) {
-		onHealed = f;
 	}
 }
