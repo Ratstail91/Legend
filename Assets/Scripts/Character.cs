@@ -46,6 +46,7 @@ public class Character : MonoBehaviour {
 		speed = 1.0f;
 		durability.maxHealthPoints = 12;
 		durability.healthPoints = 12;
+		destructable.invincibleWindow = 0.5f;
 	}
 
 	void Update() {
