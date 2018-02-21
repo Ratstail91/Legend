@@ -49,14 +49,14 @@ public class Chicken : MonoBehaviour {
 		durability.healthPoints = 3;
 
 		//DEBUG: scatter
-		transform.position = new Vector3 (
-			transform.position.x + (float)randomEngine.Rand (2) - 1f,
-			transform.position.y + (float)randomEngine.Rand (2) - 1f,
-			0f
-		);
+//		transform.position = new Vector3 (
+//			transform.position.x + (float)randomEngine.Rand (2) - 1f,
+//			transform.position.y + (float)randomEngine.Rand (2) - 1f,
+//			0f
+//		);
 
 		destructable.onDestruction = () => {
-			Debug.Log ("Oh, what a world!");
+			Instantiate(Resources.Load("Meat_Raw",  typeof(GameObject)), transform.position, Quaternion.identity);
 		};
 	}
 	
