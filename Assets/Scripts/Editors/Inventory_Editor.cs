@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 //So what does this do exactly?
@@ -42,3 +43,4 @@ public class Inventory_Editor : Editor {
 		EditorGUILayout.EndVertical ();
 	}
 }
+#endif
