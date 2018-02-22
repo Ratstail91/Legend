@@ -14,12 +14,12 @@ public class Destructable : MonoBehaviour {
 	}
 
 	//internal stuff
-	public delegate void OnDestruction();
-	public OnDestruction onDestruction {
+	public delegate void callback();
+	public callback onDestruction {
 		get { return onDestructionCallback; }
 		set { onDestructionCallback = value; }
 	}
-	OnDestruction onDestructionCallback;
+	callback onDestructionCallback;
 
 	// Use this for initialization
 	void Awake () {

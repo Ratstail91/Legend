@@ -7,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Liftable))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 
 public class Chicken : MonoBehaviour {
 	//private structures
@@ -32,6 +33,7 @@ public class Chicken : MonoBehaviour {
 	Durability durability;
 	Liftable liftable;
 	Rigidbody2D rigidBody;
+	SpriteRenderer spriteRenderer;
 
 	void Awake () {
 		//get components
@@ -41,6 +43,7 @@ public class Chicken : MonoBehaviour {
 		durability = GetComponent<Durability> ();
 		liftable = GetComponent<Liftable> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
+		spriteRenderer = GetComponent<SpriteRenderer> ();
 
 		//internal stuff
 		lastTime = Time.time;
@@ -55,7 +58,28 @@ public class Chicken : MonoBehaviour {
 //			0f
 //		);
 
+		//set callbacks
+		Durability.callback onDmg = durability.onDamaged;
+		durability.onDamaged = (int diff) => {
+			if (onDmg != null) {
+				onDmg(diff);
+			}
+			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+		};
+
+		Durability.callback onHld = durability.onHealed;
+		durability.onHealed = (int diff) => {
+			if (onHld != null) {
+				onHld(diff);
+			}
+			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+		};
+
+		Destructable.callback onDstr = destructable.onDestruction;
 		destructable.onDestruction = () => {
+			if (onDstr != null) {
+				onDstr();
+			}
 			Instantiate(Resources.Load("Meat_Raw",  typeof(GameObject)), transform.position, Quaternion.identity);
 		};
 	}
@@ -184,5 +208,12 @@ public class Chicken : MonoBehaviour {
 		//send the animation info to the animator
 		animator.SetFloat ("xSpeed", moveDelta.x);
 		animator.SetFloat ("ySpeed", moveDelta.y);
+	}
+
+	//internal stuff
+	IEnumerator FlashColor(float r, float g, float b, float seconds) {
+		spriteRenderer.color = new Color(r, g, b);
+		yield return new WaitForSeconds (seconds);
+		spriteRenderer.color = new Color(1, 1, 1);
 	}
 }

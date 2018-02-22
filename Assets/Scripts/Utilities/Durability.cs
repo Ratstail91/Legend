@@ -2,11 +2,14 @@
 using UnityEngine;
 
 public class Durability : MonoBehaviour {
+	//public stuff
+	public delegate void callback(int i);
+
 	//the important stuff
 	private int health;
 	private int maxHealth;
-	private Action<int> onDamagedCallback;
-	private Action<int> onHealedCallback;
+	private callback onDamagedCallback;
+	private callback onHealedCallback;
 
 	//accessors &  mutators
 	public int healthPoints {
@@ -24,12 +27,12 @@ public class Durability : MonoBehaviour {
 		}
 	}
 
-	public Action<int> onDamaged {
+	public callback onDamaged {
 		get { return onDamagedCallback; }
 		set { onDamagedCallback = value; }
 	}
 
-	public Action<int> onHealed {
+	public callback onHealed {
 		get { return onHealedCallback; }
 		set { onHealedCallback = value; }
 	}

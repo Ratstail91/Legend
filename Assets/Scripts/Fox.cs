@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -6,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Unit2D))]
 
 public class Fox : MonoBehaviour {
@@ -37,6 +39,7 @@ public class Fox : MonoBehaviour {
 	Destructable destructable;
 	Durability durability;
 	Rigidbody2D rigidBody;
+	SpriteRenderer spriteRenderer;
 	Unit2D pathUnit;
 
 	void Awake() {
@@ -47,6 +50,7 @@ public class Fox : MonoBehaviour {
 		destructable = GetComponent<Destructable> ();
 		durability = GetComponent<Durability> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
+		spriteRenderer = GetComponent<SpriteRenderer> ();
 		pathUnit = GetComponent<Unit2D> ();
 
 		//get the children
@@ -57,6 +61,23 @@ public class Fox : MonoBehaviour {
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 3;
 		durability.healthPoints = 3;
+
+		//set callbacks
+		Durability.callback onDmg = durability.onDamaged;
+		durability.onDamaged = (int diff) => {
+			if (onDmg != null) {
+				onDmg(diff);
+			}
+			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+		};
+
+		Durability.callback onHld = durability.onHealed;
+		durability.onHealed = (int diff) => {
+			if (onHld != null) {
+				onHld(diff);
+			}
+			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+		};
 	}
 
 	void Update() {
@@ -111,7 +132,7 @@ public class Fox : MonoBehaviour {
 
 		case Behaviour.HUNTING:
 			actionTime = 0.5f;
-			pathUnit.speed = 0.4f;
+			pathUnit.speed = 0.5f;
 
 			//if there's a chicken within a certain distance (code duplication)
 			closest = FindClosestChicken ();
@@ -129,7 +150,7 @@ public class Fox : MonoBehaviour {
 			}
 
 			actionTime = 0.5f;
-			pathUnit.speed = 0.4f;
+			pathUnit.speed = 0.5f;
 
 			Vector2 targetPos = new Vector2 (fightingTarget.transform.position.x, fightingTarget.transform.position.y);
 
@@ -206,6 +227,12 @@ public class Fox : MonoBehaviour {
 		animator.SetFloat ("ySpeed", pathUnit.movement.y);
 		animator.SetFloat ("lastXSpeed", lastDirection.x);
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
+	}
+
+	IEnumerator FlashColor(float r, float g, float b, float seconds) {
+		spriteRenderer.color = new Color(r, g, b);
+		yield return new WaitForSeconds (seconds);
+		spriteRenderer.color = new Color(1, 1, 1);
 	}
 
 	//custom stuff below this line

@@ -2,14 +2,13 @@
 using System.Collections;
 using UnityEngine;
 
-//TODO: disable damage while attacking - 1 frame of immunity
-
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Lifter))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 
 public class Character : MonoBehaviour {
 	//internal variables
@@ -29,6 +28,7 @@ public class Character : MonoBehaviour {
 	Durability durability;
 	Lifter lifter;
 	Rigidbody2D rigidBody;
+	SpriteRenderer spriteRenderer;
 
 	void Awake() {
 		//get the components
@@ -38,15 +38,33 @@ public class Character : MonoBehaviour {
 		durability = GetComponent<Durability> ();
 		lifter = GetComponent<Lifter> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
+		spriteRenderer = GetComponent<SpriteRenderer> ();
 
 		//get the sword
 		swordDamager = transform.GetChild(0).gameObject;
 
 		//set up the internals
-		speed = 1.0f;
+		speed = 0.79f;
 		durability.maxHealthPoints = 12;
 		durability.healthPoints = 12;
 		destructable.invincibleWindow = 0.5f;
+
+		//set callbacks
+		Durability.callback onDmg = durability.onDamaged;
+		durability.onDamaged = (int diff) => {
+			if (onDmg != null) {
+				onDmg(diff);
+			}
+			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+		};
+
+		Durability.callback onHld = durability.onHealed;
+		durability.onHealed = (int diff) => {
+			if (onHld != null) {
+				onHld(diff);
+			}
+			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+		};
 	}
 
 	void Update() {
@@ -123,5 +141,11 @@ public class Character : MonoBehaviour {
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
 		animator.SetBool ("isMoving", isMoving); //TODO: remove this from the animation system
 		animator.SetBool ("isAttacking", isAttacking);
+	}
+
+	IEnumerator FlashColor(float r, float g, float b, float seconds) {
+		spriteRenderer.color = new Color(r, g, b);
+		yield return new WaitForSeconds (seconds);
+		spriteRenderer.color = new Color(1, 1, 1);
 	}
 }
