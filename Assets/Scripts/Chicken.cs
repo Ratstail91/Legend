@@ -23,7 +23,7 @@ public class Chicken : MonoBehaviour {
 	private float actionTime;
 
 	private float timeUntilCalm;
-	private Vector2 movement;
+	private Vector2 moveDelta; //this is so bad...
 	private float speed;
 
 	//component members
@@ -85,16 +85,17 @@ public class Chicken : MonoBehaviour {
 			//run AWAY
 			Vector3 otherPos3 = collision.collider.gameObject.transform.position;
 			Vector2 otherPos = new Vector2 (otherPos3.x, otherPos3.y);
+
 			Vector2 direction = new Vector2 (transform.position.x, transform.position.y) - otherPos;
-			//similar to deltaForce
+
+			//determine moveDelta
 			if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) {
-				direction.x = direction.x > 0 ? 1 : -1;
-				direction.y = 0;
+				moveDelta.x = direction.x > 0 ? 1 : -1;
+				moveDelta.y = 0;
 			} else {
-				direction.x = 0;
-				direction.y = direction.y > 0 ? 1 : -1;
+				moveDelta.x = 0;
+				moveDelta.y = direction.y > 0 ? 1 : -1;
 			}
-			movement = direction * speed;
 		}
 	}
 
@@ -105,13 +106,14 @@ public class Chicken : MonoBehaviour {
 		}
 		else if (!liftable.isLifted && behaviour == Behaviour.LIFTED) {
 			//handle placement
-			//slight code duplication
 			behaviour = Behaviour.SCARED;
 			timeUntilCalm = 5.0f;
 			lastTime = Time.time;
 			actionTime = 1.0f;
 			speed = 1.2f;
-			movement = liftable.lastDirection * speed;
+
+			//run
+			moveDelta = liftable.lastDirection;
 		}
 		else if (behaviour == Behaviour.SCARED) {
 			//handle scaredness
@@ -132,8 +134,6 @@ public class Chicken : MonoBehaviour {
 	}
 
 	void CalculateMovement() {
-		Vector2 deltaForce = new Vector2 (0, 0);
-
 		int direction = (int)randomEngine.Rand(5.0);
 
 		//handle scared = no stopping
@@ -142,40 +142,47 @@ public class Chicken : MonoBehaviour {
 		}
 
 		switch (direction) {
+		case 0:
+			moveDelta = new Vector2 (0, 0);
+			break;
 		case 1:
-			deltaForce = new Vector2 (1, 0);
+			moveDelta = new Vector2 (1, 0);
 			break;
 		case 2:
-			deltaForce = new Vector2 (-1, 0);
+			moveDelta = new Vector2 (-1, 0);
 			break;
 		case 3:
-			deltaForce = new Vector2 (0, 1);
+			moveDelta = new Vector2 (0, 1);
 			break;
 		case 4:
-			deltaForce = new Vector2 (0, -1);
+			moveDelta = new Vector2 (0, -1);
 			break;
-//		case 0 = force 0
 		}
-
-		movement = deltaForce * speed;
 	}
 
 	void Move() {
 		if (behaviour != Behaviour.LIFTED) {
 			rigidBody.velocity = Vector2.zero;
-			rigidBody.AddForce (movement, ForceMode2D.Impulse);
+
+			Vector2 impulse = moveDelta * speed;
+
+			if (moveDelta.x != 0 && moveDelta.y != 0) {
+				impulse *= 0.71f;
+			}
+
+			rigidBody.AddForce (impulse, ForceMode2D.Impulse);
 		}
 		else {
-			//for carrying in the right direction
+			//for carrying in the right direction (animation)
 			if (rigidBody.velocity != Vector2.zero) {
-				movement = rigidBody.velocity;
+				moveDelta = rigidBody.velocity;
 			}
 		}
 	}
 
 	void SendAnimationInfo() {
 		//send the animation info to the animator
-		animator.SetFloat ("xSpeed", movement.x);
-		animator.SetFloat ("ySpeed", movement.y);
+		animator.SetFloat ("xSpeed", moveDelta.x);
+		animator.SetFloat ("ySpeed", moveDelta.y);
 	}
 }

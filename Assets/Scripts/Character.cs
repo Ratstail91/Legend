@@ -84,7 +84,14 @@ public class Character : MonoBehaviour {
 	void Move() {
 		//determine how to move the character
 		rigidBody.velocity = Vector2.zero;
-		rigidBody.AddForce (deltaForce * speed, ForceMode2D.Impulse);
+
+		Vector2 impulse = deltaForce * speed;
+
+		if (deltaForce.x != 0 && deltaForce.y != 0) {
+			impulse *= 0.71f;
+		}
+
+		rigidBody.AddForce (impulse, ForceMode2D.Impulse);
 	}
 
 	void CalculateAttack() {

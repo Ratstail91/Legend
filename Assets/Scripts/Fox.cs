@@ -163,7 +163,7 @@ public class Fox : MonoBehaviour {
 				break;
 //			case 0 = force 0
 			}
-			pathUnit.movement = deltaForce * pathUnit.speed;
+			pathUnit.movement = deltaForce * pathUnit.speed; //no diagonal adjustment for normal behaviour
 			break;
 
 		case Behaviour.HUNTING:
