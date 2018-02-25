@@ -10,6 +10,38 @@ public class Durability : MonoBehaviour {
 	private int maxHealth;
 	private callback onDamagedCallback;
 	private callback onHealedCallback;
+	private callback onDestructionCallback;
+
+	//timing members
+	float lastTime = float.NegativeInfinity;
+	float actionTime = 0;
+	public float invincibleWindow {
+		get { return actionTime; }
+		set { actionTime = value >= 0 ? value : 0; }
+	}
+
+	// Update is called once per frame
+	void Update () {
+		//handle destruction
+		if (healthPoints <= 0 ) {
+			if (onDestruction != null) {
+				onDestruction (0); //callback
+			}
+			Destroy (gameObject);
+		}
+	}
+
+	//this handles damage and invincibility windows
+	void OnCollisionEnter2D(Collision2D collision) {
+		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
+			Damager dmgr = collision.collider.gameObject.GetComponent<Damager> ();
+
+			if (lastTime + actionTime < Time.time) { 
+				healthPoints += dmgr.damageValue;
+				lastTime = Time.time;
+			}
+		}
+	}
 
 	//accessors &  mutators
 	public int healthPoints {
@@ -25,6 +57,11 @@ public class Durability : MonoBehaviour {
 			health = value;
 			ClampHealth ();
 		}
+	}
+
+	public callback onDestruction {
+		get { return onDestructionCallback; }
+		set { onDestructionCallback = value; }
 	}
 
 	public callback onDamaged {

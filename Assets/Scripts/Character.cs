@@ -4,7 +4,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Lifter))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -16,7 +15,8 @@ public class Character : MonoBehaviour {
 	Vector2 deltaForce;
 	Vector2 lastDirection;
 	bool isMoving = false;
-	bool isAttacking = false;
+	float lastAttackTime = float.NegativeInfinity;
+	float attackInterval = 0.3f;
 
 	//child objects
 	GameObject swordDamager;
@@ -24,7 +24,6 @@ public class Character : MonoBehaviour {
 	//component references
 	Animator animator;
 	BoxCollider2D boxCollider;
-	Destructable destructable;
 	Durability durability;
 	Lifter lifter;
 	Rigidbody2D rigidBody;
@@ -34,7 +33,6 @@ public class Character : MonoBehaviour {
 		//get the components
 		animator = GetComponent<Animator> ();
 		boxCollider = GetComponent<BoxCollider2D> ();
-		destructable = GetComponent<Destructable> ();
 		durability = GetComponent<Durability> ();
 		lifter = GetComponent<Lifter> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
@@ -47,7 +45,7 @@ public class Character : MonoBehaviour {
 		speed = 0.79f;
 		durability.maxHealthPoints = 12;
 		durability.healthPoints = 12;
-		destructable.invincibleWindow = 0.5f;
+		durability.invincibleWindow = 0.5f;
 
 		//set callbacks
 		Durability.callback onDmg = durability.onDamaged;
@@ -93,9 +91,8 @@ public class Character : MonoBehaviour {
 		lifter.SetLastDirection(lastDirection);
 
 		//if space pressed but not lifting or trying to lift, set attacking to true
-		isAttacking = false;
-		if (Input.GetKeyDown("space")) {
-			isAttacking = true;
+		if (Input.GetKeyDown("space") && Time.time - lastAttackTime > attackInterval) {
+			lastAttackTime = Time.time;
 		}
 	}
 
@@ -114,7 +111,7 @@ public class Character : MonoBehaviour {
 
 	void CalculateAttack() {
 		//skip this if not attacking
-		if (!isAttacking) {
+		if (Time.time - lastAttackTime > attackInterval) {
 			swordDamager.SetActive (false);
 			return;
 		}
@@ -140,12 +137,26 @@ public class Character : MonoBehaviour {
 		animator.SetFloat ("lastXSpeed", lastDirection.x);
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
 		animator.SetBool ("isMoving", isMoving); //TODO: remove this from the animation system
-		animator.SetBool ("isAttacking", isAttacking);
+		animator.SetBool ("isAttacking", Time.time - lastAttackTime <= attackInterval);
 	}
 
 	IEnumerator FlashColor(float r, float g, float b, float seconds) {
 		spriteRenderer.color = new Color(r, g, b);
 		yield return new WaitForSeconds (seconds);
 		spriteRenderer.color = new Color(1, 1, 1);
+	}
+
+	//DEBUGGING
+	public bool drawGizmos = true;
+	void OnDrawGizmos() {
+		if (!drawGizmos) {
+			return;
+		}
+		if (swordDamager.active) {
+			Gizmos.color = Color.red;
+		} else {
+			Gizmos.color = Color.cyan;
+		}
+		Gizmos.DrawCube (swordDamager.transform.position, swordDamager.GetComponent<BoxCollider2D> ().size);
 	}
 }

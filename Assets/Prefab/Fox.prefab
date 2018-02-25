@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 61471958830335030}
   - component: {fileID: 114177939320725140}
   - component: {fileID: 114950237018929774}
-  - component: {fileID: 114293560538366952}
   - component: {fileID: 114257827984408034}
   m_Layer: 11
   m_Name: Fox
@@ -121,7 +120,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.07, y: 0.15}
+  m_Size: {x: 0.15, y: 0.15}
   m_EdgeRadius: 0
 --- !u!61 &61471958830335030
 BoxCollider2D:
@@ -191,17 +190,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   movement: {x: 0, y: 0}
---- !u!114 &114293560538366952
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1321896904167958}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af47c27125dab9e469a18971dfd1f5dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114648052078002880
 MonoBehaviour:
   m_ObjectHideFlags: 1

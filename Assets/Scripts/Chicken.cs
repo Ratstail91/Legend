@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Liftable))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -29,7 +28,6 @@ public class Chicken : MonoBehaviour {
 
 	//component members
 	Animator animator;
-	Destructable destructable;
 	Durability durability;
 	Liftable liftable;
 	Rigidbody2D rigidBody;
@@ -39,7 +37,6 @@ public class Chicken : MonoBehaviour {
 		//get components
 		randomEngine = new RandomEngine ();
 		animator = GetComponent<Animator> ();
-		destructable = GetComponent<Destructable> ();
 		durability = GetComponent<Durability> ();
 		liftable = GetComponent<Liftable> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
@@ -50,6 +47,7 @@ public class Chicken : MonoBehaviour {
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 3;
 		durability.healthPoints = 3;
+		durability.invincibleWindow = 0.5f;
 
 		//DEBUG: scatter
 //		transform.position = new Vector3 (
@@ -75,10 +73,10 @@ public class Chicken : MonoBehaviour {
 			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
 		};
 
-		Destructable.callback onDstr = destructable.onDestruction;
-		destructable.onDestruction = () => {
+		Durability.callback onDstr = durability.onDestruction;
+		durability.onDestruction = (int i) => {
 			if (onDstr != null) {
-				onDstr();
+				onDstr(i);
 			}
 			Instantiate(Resources.Load("Meat_Raw",  typeof(GameObject)), transform.position, Quaternion.identity);
 		};

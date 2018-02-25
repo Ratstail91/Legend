@@ -4,7 +4,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Destructable))]
 [RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -36,7 +35,6 @@ public class Fox : MonoBehaviour {
 	//components
 	Animator animator;
 	BoxCollider2D boxCollider;
-	Destructable destructable;
 	Durability durability;
 	Rigidbody2D rigidBody;
 	SpriteRenderer spriteRenderer;
@@ -47,7 +45,6 @@ public class Fox : MonoBehaviour {
 		randomEngine = new RandomEngine ();
 		animator = GetComponent<Animator> ();
 		boxCollider = GetComponent<BoxCollider2D> ();
-		destructable = GetComponent<Destructable> ();
 		durability = GetComponent<Durability> ();
 		rigidBody = GetComponent<Rigidbody2D> ();
 		spriteRenderer = GetComponent<SpriteRenderer> ();
@@ -59,8 +56,9 @@ public class Fox : MonoBehaviour {
 		//internal stuff
 		lastTime = Time.time;
 		behaviour = Behaviour.NORMAL;
-		durability.maxHealthPoints = 3;
-		durability.healthPoints = 3;
+		durability.maxHealthPoints = 4;
+		durability.healthPoints = 4;
+		durability.invincibleWindow = 0.5f;
 
 		//set callbacks
 		Durability.callback onDmg = durability.onDamaged;
@@ -98,7 +96,6 @@ public class Fox : MonoBehaviour {
 
 		//custom fox stuff
 		CalculateAttack ();
-		UpdateBoxColliders ();
 
 		SendAnimationInfo ();
 	}
@@ -255,20 +252,6 @@ public class Fox : MonoBehaviour {
 		}
 
 		biteDamager.transform.position = newPos;
-	}
-
-	void UpdateBoxColliders () {
-		//boxCollider up & down:    0.07 x 0.15
-		//boxCollider left & right: 0.31 x 0.15
-
-		if (Mathf.Abs(lastDirection.y) > Mathf.Abs(lastDirection.x)) {
-			boxCollider.size = new Vector2 (0.07f, 0.15f);
-		} else {
-			boxCollider.size = new Vector2 (0.31f, 0.15f);
-		}
-
-		//update the biter
-		biteDamager.GetComponent<BoxCollider2D> ().size = boxCollider.size;
 	}
 
 	Vector2 FindClosestChicken() {
