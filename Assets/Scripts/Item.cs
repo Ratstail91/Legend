@@ -9,9 +9,9 @@ public class Item : MonoBehaviour {
 		sprite = GetComponent<SpriteRenderer> ().sprite;
 	}
 
-	void OnTriggerEnter2D(Collider2D collider) {
+	void OnTriggerStay2D(Collider2D collider) {
 		//collided with the character
-		if (collider.gameObject.GetComponent<Character> () != null) {
+		if (collider.gameObject.GetComponent<Character> () != null && Input.GetKeyDown(KeyCode.E)) {
 			//dreaded globals!
 			GameObject inventoryObject = GameObject.Find ("Inventory");
 

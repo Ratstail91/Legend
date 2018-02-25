@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 114177939320725140}
   - component: {fileID: 114950237018929774}
   - component: {fileID: 114257827984408034}
-  m_Layer: 11
+  m_Layer: 13
   m_Name: Fox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 4017519628006988}
   - component: {fileID: 61408772213610138}
   - component: {fileID: 114648052078002880}
-  m_Layer: 11
+  m_Layer: 13
   m_Name: BiteDamager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -244,8 +244,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1795258893
-  m_SortingLayer: 4
+  m_SortingLayerID: 1142455235
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ed20c50b457b4ba4a832c53adb0d8de5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

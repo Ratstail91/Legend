@@ -20,7 +20,7 @@ public class Lifter : MonoBehaviour {
 
 	void Update () {
 		//run each routine in order
-		CheckInput ("tab");
+		CheckInput ("e");
 		CalculateMovement ();
 	}
 

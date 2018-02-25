@@ -3,10 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Wall
-  - Liftable
-  - Damager
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -19,9 +16,9 @@ TagManager:
   - Background
   - Unwalkable
   - Characters
-  - Objects
+  - Items
   - Foreground
-  - 
+  - Creatures
   - 
   - 
   - 
@@ -50,11 +47,14 @@ TagManager:
   - name: Walls
     uniqueID: 483895027
     locked: 0
+  - name: Items
+    uniqueID: 1795258893
+    locked: 0
   - name: Characters
     uniqueID: 2708321299
     locked: 0
-  - name: Objects
-    uniqueID: 1795258893
+  - name: Creatures
+    uniqueID: 1142455235
     locked: 0
   - name: Foreground
     uniqueID: 3808244987
