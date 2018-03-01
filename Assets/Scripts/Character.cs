@@ -53,7 +53,7 @@ public class Character : MonoBehaviour {
 			if (onDmg != null) {
 				onDmg(diff);
 			}
-			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+			FlashColor(1, 0, 0, 0.1f);
 		};
 
 		Durability.callback onHld = durability.onHealed;
@@ -61,7 +61,7 @@ public class Character : MonoBehaviour {
 			if (onHld != null) {
 				onHld(diff);
 			}
-			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+			FlashColor(0, 1, 0, 0.1f);
 		};
 	}
 
@@ -140,7 +140,11 @@ public class Character : MonoBehaviour {
 		animator.SetBool ("isAttacking", Time.time - lastAttackTime <= attackInterval);
 	}
 
-	IEnumerator FlashColor(float r, float g, float b, float seconds) {
+	void FlashColor(float r, float g, float b, float seconds) {
+		StartCoroutine (FlashColorCoroutine (r, g, b, seconds));
+	}
+
+	IEnumerator FlashColorCoroutine(float r, float g, float b, float seconds) {
 		spriteRenderer.color = new Color(r, g, b);
 		yield return new WaitForSeconds (seconds);
 		spriteRenderer.color = new Color(1, 1, 1);
@@ -152,7 +156,7 @@ public class Character : MonoBehaviour {
 		if (!drawGizmos) {
 			return;
 		}
-		if (swordDamager.active) {
+		if (swordDamager.activeSelf) {
 			Gizmos.color = Color.red;
 		} else {
 			Gizmos.color = Color.cyan;

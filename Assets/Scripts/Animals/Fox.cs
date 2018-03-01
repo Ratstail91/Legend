@@ -2,28 +2,20 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(Durability))]
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Unit2D))]
 
-public class Fox : MonoBehaviour {
+public class Fox : Creature {
 	//interface structures
 	private enum Behaviour {
 		NORMAL,
 		HUNTING,
 		FIGHTING
 	}
-	private RandomEngine randomEngine;
 
 	//private members
 	private Behaviour behaviour;
-	private float lastTime;
-	private float actionTime;
 
-	private Vector2 lastDirection;
+	private Vector2 lastDirection; //for animation
 	private bool isAttacking = false;
 	public float huntDistance; //public for the inspector
 	public float biteDistance; //public for the inspector
@@ -33,28 +25,18 @@ public class Fox : MonoBehaviour {
 	private GameObject biteDamager;
 
 	//components
-	Animator animator;
-	BoxCollider2D boxCollider;
-	Durability durability;
-	Rigidbody2D rigidBody;
-	SpriteRenderer spriteRenderer;
 	Unit2D pathUnit;
 
-	void Awake() {
+	protected override void Awake() {
+		base.Awake ();
+
 		//get components
-		randomEngine = new RandomEngine ();
-		animator = GetComponent<Animator> ();
-		boxCollider = GetComponent<BoxCollider2D> ();
-		durability = GetComponent<Durability> ();
-		rigidBody = GetComponent<Rigidbody2D> ();
-		spriteRenderer = GetComponent<SpriteRenderer> ();
 		pathUnit = GetComponent<Unit2D> ();
 
 		//get the children
 		biteDamager = transform.GetChild(0).gameObject;
 
 		//internal stuff
-		lastTime = Time.time;
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 4;
 		durability.healthPoints = 4;
@@ -66,7 +48,7 @@ public class Fox : MonoBehaviour {
 			if (onDmg != null) {
 				onDmg(diff);
 			}
-			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+			FlashColor(1, 0, 0, 0.1f);
 		};
 
 		Durability.callback onHld = durability.onHealed;
@@ -74,11 +56,11 @@ public class Fox : MonoBehaviour {
 			if (onHld != null) {
 				onHld(diff);
 			}
-			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+			FlashColor(0, 1, 0, 0.1f);
 		};
 	}
 
-	void Update() {
+	protected override void Update() {
 		HandleBehaviour ();
 
 		//if time interval
@@ -108,7 +90,7 @@ public class Fox : MonoBehaviour {
 		}
 	}
 
-	void HandleBehaviour() {
+	protected override void HandleBehaviour() {
 		//get this pos
 		Vector2 thisPos = new Vector2 (transform.position.x, transform.position.y);
 
@@ -157,7 +139,7 @@ public class Fox : MonoBehaviour {
 		}
 	}
 
-	void CalculateMovement() {
+	protected override void CalculateMovement() {
 		//heavy handed
 		pathUnit.StopFollowingPath ();
 
@@ -211,25 +193,19 @@ public class Fox : MonoBehaviour {
 		}
 	}
 
-	void Move() {
+	protected override void Move() {
 		if (behaviour == Behaviour.NORMAL) {
 			//force move if not following path
 			pathUnit.Move();
 		}
 	}
 
-	void SendAnimationInfo() {
+	protected override void SendAnimationInfo() {
 		//send the animation info to the animator
 		animator.SetFloat ("xSpeed", pathUnit.movement.x);
 		animator.SetFloat ("ySpeed", pathUnit.movement.y);
 		animator.SetFloat ("lastXSpeed", lastDirection.x);
 		animator.SetFloat ("lastYSpeed", lastDirection.y);
-	}
-
-	IEnumerator FlashColor(float r, float g, float b, float seconds) {
-		spriteRenderer.color = new Color(r, g, b);
-		yield return new WaitForSeconds (seconds);
-		spriteRenderer.color = new Color(1, 1, 1);
 	}
 
 	//custom stuff below this line

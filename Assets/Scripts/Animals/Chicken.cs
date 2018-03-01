@@ -2,59 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(Durability))]
 [RequireComponent(typeof(Liftable))]
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(SpriteRenderer))]
 
-public class Chicken : MonoBehaviour {
+public class Chicken : Creature {
 	//private structures
 	private enum Behaviour {
 		NORMAL,
 		SCARED,
 		LIFTED
 	}
-	private RandomEngine randomEngine;
 
 	//private members
 	private Behaviour behaviour;
-	private float lastTime;
-	private float actionTime;
 
 	private float timeUntilCalm;
-	private Vector2 moveDelta; //this is so bad...
+	private Vector2 moveDelta;
 	private float speed;
 
-	//component members
-	Animator animator;
-	Durability durability;
+	//conponents
 	Liftable liftable;
-	Rigidbody2D rigidBody;
-	SpriteRenderer spriteRenderer;
 
-	void Awake () {
+	protected override void Awake () {
+		base.Awake ();
+
 		//get components
-		randomEngine = new RandomEngine ();
-		animator = GetComponent<Animator> ();
-		durability = GetComponent<Durability> ();
 		liftable = GetComponent<Liftable> ();
-		rigidBody = GetComponent<Rigidbody2D> ();
-		spriteRenderer = GetComponent<SpriteRenderer> ();
 
 		//internal stuff
-		lastTime = Time.time;
 		behaviour = Behaviour.NORMAL;
 		durability.maxHealthPoints = 3;
 		durability.healthPoints = 3;
 		durability.invincibleWindow = 0.5f;
-
-		//DEBUG: scatter
-//		transform.position = new Vector3 (
-//			transform.position.x + (float)randomEngine.Rand (2) - 1f,
-//			transform.position.y + (float)randomEngine.Rand (2) - 1f,
-//			0f
-//		);
 
 		//set callbacks
 		Durability.callback onDmg = durability.onDamaged;
@@ -62,7 +40,7 @@ public class Chicken : MonoBehaviour {
 			if (onDmg != null) {
 				onDmg(diff);
 			}
-			StartCoroutine(FlashColor(1, 0, 0, 0.1f));
+			FlashColor(1, 0, 0, 0.1f);
 		};
 
 		Durability.callback onHld = durability.onHealed;
@@ -70,7 +48,7 @@ public class Chicken : MonoBehaviour {
 			if (onHld != null) {
 				onHld(diff);
 			}
-			StartCoroutine(FlashColor(0, 1, 0, 0.1f));
+			FlashColor(0, 1, 0, 0.1f);
 		};
 
 		Durability.callback onDstr = durability.onDestruction;
@@ -82,11 +60,11 @@ public class Chicken : MonoBehaviour {
 		};
 	}
 	
-	void Update () {
+	protected override void Update () {
 		HandleBehaviour ();
 
 		//if time interval and not lifted
-		if (lastTime + actionTime < Time.time && behaviour != Behaviour.LIFTED) {
+		if (lastTime + actionTime < Time.time && !liftable.isLifted) {
 			CalculateMovement ();
 			lastTime = Time.time;
 		}
@@ -121,7 +99,7 @@ public class Chicken : MonoBehaviour {
 		}
 	}
 
-	void HandleBehaviour() {
+	protected override void HandleBehaviour() {
 		//handle passiveness
 		if (liftable.isLifted) {
 			behaviour = Behaviour.LIFTED;
@@ -155,7 +133,7 @@ public class Chicken : MonoBehaviour {
 		}
 	}
 
-	void CalculateMovement() {
+	protected override void CalculateMovement() {
 		int direction = (int)randomEngine.Rand(5.0);
 
 		//handle scared = no stopping
@@ -182,36 +160,29 @@ public class Chicken : MonoBehaviour {
 		}
 	}
 
-	void Move() {
-		if (behaviour != Behaviour.LIFTED) {
+	protected override void Move() {
+		if (behaviour == Behaviour.LIFTED) {
+			//for carrying in the right direction (animation)
+			if (rigidBody.velocity != Vector2.zero) {
+				moveDelta = rigidBody.velocity;
+			}
+		} else {
+			//normal movement
 			rigidBody.velocity = Vector2.zero;
 
 			Vector2 impulse = moveDelta * speed;
 
 			if (moveDelta.x != 0 && moveDelta.y != 0) {
-				impulse *= 0.71f;
+				impulse *= 0.71f; //diagonal
 			}
 
 			rigidBody.AddForce (impulse, ForceMode2D.Impulse);
 		}
-		else {
-			//for carrying in the right direction (animation)
-			if (rigidBody.velocity != Vector2.zero) {
-				moveDelta = rigidBody.velocity;
-			}
-		}
 	}
 
-	void SendAnimationInfo() {
+	protected override void SendAnimationInfo() {
 		//send the animation info to the animator
 		animator.SetFloat ("xSpeed", moveDelta.x);
 		animator.SetFloat ("ySpeed", moveDelta.y);
-	}
-
-	//internal stuff
-	IEnumerator FlashColor(float r, float g, float b, float seconds) {
-		spriteRenderer.color = new Color(r, g, b);
-		yield return new WaitForSeconds (seconds);
-		spriteRenderer.color = new Color(1, 1, 1);
 	}
 }
