@@ -3,41 +3,83 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour {
 	public const int itemSlotCount = 4;
+	int selectedSlot = 0;
 
-	public Image[] itemImages = new Image[itemSlotCount];
-	public Item[] items = new Item[itemSlotCount];
+	public Item_Slot[] itemSlots = new Item_Slot[itemSlotCount];
 
 	void Awake() {
-		//HACK: get the references to the itemImages
-		//children should be like: ItemSlot { BackgroundImage, ItemImage }
-		Image[] imageArray = GetComponentsInChildren<Image> ();
+		//get the child Item_Slots
+		Transform[] childTransforms = GetComponentsInChildren<Transform> ();
+		//format: {Inventory, ItemSlot {background, selection, item}, ...}
 		for (int i = 0; i < itemSlotCount; i++) {
-			itemImages[i] = imageArray [i * 2 + 1];
+			itemSlots [i] = childTransforms [1 + i * 4].gameObject.GetComponent<Item_Slot> ();
+		}
+
+		SetSelection (0);
+	}
+
+	void Update() {
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			this.SelectionDown();
+		}
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			this.SelectionUp();
+		}
+
+		if (Input.GetKeyDown(KeyCode.R)) {
+			Item item = RemoveItem (selectedSlot);
+			if (item != null) {
+				item.transform.position = GameObject.Find ("Character").transform.position;
+			}
 		}
 	}
 
 	public bool AddItem(Item newItem) {
 		for (int i = 0; i < itemSlotCount; i++) {
-			//empty slot
-			if (items[i] == null) {
-				items [i] = newItem;
-				itemImages [i].sprite = newItem.sprite;
-				itemImages [i].enabled = true;
+			if (itemSlots [i].GetItem() == null) {
+				itemSlots [i].AddItem (newItem);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public bool RemoveItem(Item removeItem) {
-		for (int i = 0; i < itemSlotCount; i++) {
-			if (items[i] == removeItem) {
-				items [i] = null;
-				itemImages [i].sprite = null;
-				itemImages [i].enabled = false;
-				return true;
-			}
+	public Item RemoveItem(int index) {
+		return itemSlots [index].RemoveItem ();
+	}
+
+	//selection controllers
+	public void SetSelection(int i) {
+		selectedSlot = i;
+		CheckSelectionBounds ();
+		UpdateSelection ();
+	}
+
+	public void SelectionDown() {
+		selectedSlot--;
+		CheckSelectionBounds ();
+		UpdateSelection ();
+	}
+
+	public void SelectionUp() {
+		selectedSlot++;
+		CheckSelectionBounds ();
+		UpdateSelection ();
+	}
+
+	void CheckSelectionBounds() {
+		if (selectedSlot < 0) {
+			selectedSlot = 0;
 		}
-		return false;
+		if (selectedSlot >= itemSlotCount) {
+			selectedSlot = itemSlotCount - 1;
+		}
+	}
+
+	void UpdateSelection() {
+		foreach (Item_Slot slot in itemSlots) {
+			slot.SetSelected (false);
+		}
+		itemSlots [selectedSlot].SetSelected (true);
 	}
 }
