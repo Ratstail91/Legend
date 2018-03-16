@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour {
 	public const int itemSlotCount = 4;
 	int selectedSlot = 0;
+	float lastPress = float.NegativeInfinity;
+	float pressDelay = 0.5f;
 
 	public Item_Slot[] itemSlots = new Item_Slot[itemSlotCount];
 
@@ -19,14 +21,20 @@ public class Inventory : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+		if (Input.GetButton("Inventory Up") && Time.time - lastPress > pressDelay) {
 			this.SelectionDown();
+			lastPress = Time.time;
 		}
-		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+		if ((Input.GetButton("Inventory Down") || Input.GetAxis("Inventory Down") > 0) && Time.time - lastPress > pressDelay) {
 			this.SelectionUp();
+			lastPress = Time.time;
 		}
 
-		if (Input.GetKeyDown(KeyCode.R)) {
+		if (!Input.GetButton("Inventory Up") && !Input.GetButton("Inventory Down") && Input.GetAxis("Inventory Down") == 0) {
+			lastPress = float.NegativeInfinity;
+		}
+
+		if (Input.GetButton("Drop")) {
 			Item item = RemoveItem (selectedSlot);
 			if (item != null) {
 				item.transform.position = GameObject.Find ("Character").transform.position;

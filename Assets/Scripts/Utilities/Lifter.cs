@@ -6,6 +6,8 @@ public class Lifter : MonoBehaviour {
 	//the private variables
 	private bool isLifting = false;
 	private Vector2 lastDirection; //the direction that the liftableObject should be placed
+	float lastPress;
+	float pressDelay = 0.5f;
 
 	//the reference to the liftable object
 	private GameObject liftableObject;
@@ -13,14 +15,15 @@ public class Lifter : MonoBehaviour {
 	//references to the components
 	private Rigidbody2D rigidBody;
 
-	void Start () {
+	void Awake () {
 		//get the components
 		rigidBody = GetComponent<Rigidbody2D> ();
+		lastPress = float.NegativeInfinity;
 	}
 
 	void Update () {
 		//run each routine in order
-		CheckInput ("e");
+		CheckInput ("Use");
 		CalculateMovement ();
 	}
 
@@ -48,7 +51,8 @@ public class Lifter : MonoBehaviour {
 
 	void CheckInput(string keyDown) {
 		//trying to put down an object
-		if (Input.GetKeyDown(keyDown) && isLifting) {
+		if (Input.GetButton(keyDown) && Time.time - lastPress > pressDelay && isLifting) {
+			lastPress = Time.time;
 			isLifting = false;
 			liftableObject.GetComponent<Liftable> ().isLifted = false;
 
@@ -68,9 +72,15 @@ public class Lifter : MonoBehaviour {
 		}
 
 		//trying to pick up object
-		if (Input.GetKeyDown(keyDown) && liftableObject != null) {
+		if (Input.GetButton(keyDown) && Time.time - lastPress > pressDelay && liftableObject != null) {
+			lastPress = Time.time;
 			isLifting = true;
 			liftableObject.GetComponent<Liftable> ().isLifted = true;
+		}
+
+		//reset delay timer
+		if (!Input.GetButton (keyDown) && liftableObject != null) {
+			lastPress = float.NegativeInfinity;
 		}
 	}
 

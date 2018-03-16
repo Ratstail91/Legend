@@ -75,8 +75,8 @@ public class Character : MonoBehaviour {
 
 	void CheckInput() {
 		//determine the input from the player
-		float horizontal = Input.GetAxisRaw ("Horizontal");
-		float vertical = Input.GetAxisRaw ("Vertical");
+		float horizontal = Input.GetAxis ("Horizontal");
+		float vertical = Input.GetAxis ("Vertical");
 		
 		deltaForce = new Vector2 (horizontal, vertical);
 
@@ -91,7 +91,7 @@ public class Character : MonoBehaviour {
 		lifter.SetLastDirection(lastDirection);
 
 		//if space pressed but not lifting or trying to lift, set attacking to true
-		if (Input.GetKeyDown("space") && Time.time - lastAttackTime > attackInterval) {
+		if (Input.GetButton("Attack") && Time.time - lastAttackTime > attackInterval) {
 			lastAttackTime = Time.time;
 		}
 	}
@@ -100,11 +100,7 @@ public class Character : MonoBehaviour {
 		//determine how to move the character
 		rigidBody.velocity = Vector2.zero;
 
-		Vector2 impulse = deltaForce * speed;
-
-		if (deltaForce.x != 0 && deltaForce.y != 0) {
-			impulse *= 0.71f;
-		}
+		Vector2 impulse = deltaForce.normalized * speed;
 
 		rigidBody.AddForce (impulse, ForceMode2D.Impulse);
 	}
