@@ -13,6 +13,7 @@ public class Item_Slot : MonoBehaviour {
 	void Awake () {
 		//children should be like: { BackgroundImage, SelectionImage, ItemImage }
 		Image[] imageArray = GetComponentsInChildren<Image> ();
+		Debug.Log (imageArray.Length);
 		selectedImage = imageArray [1];
 		itemImage = imageArray [2];
 		UpdateSelected ();
@@ -56,7 +57,8 @@ public class Item_Slot : MonoBehaviour {
 		return selected;
 	}
 
-	public void UpdateSelected() {
+	void UpdateSelected() {
+		Debug.Log (selectedImage);
 		selectedImage.enabled = selected;
 	}
 }

@@ -36,7 +36,7 @@ public class Durability : MonoBehaviour {
 		if (collision.collider.gameObject.GetComponent<Damager> () != null) {
 			Damager dmgr = collision.collider.gameObject.GetComponent<Damager> ();
 
-			if (lastTime + actionTime < Time.time) { 
+			if (lastTime + actionTime < Time.time) {
 				healthPoints += dmgr.damageValue;
 				lastTime = Time.time;
 			}

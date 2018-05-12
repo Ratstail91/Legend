@@ -1,0 +1,72 @@
+<!-- This was taken directly from the baking script -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/semantic-ui/2.2.8/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="https://krgamestudios.com/styles/shared.css?v=1" />
+    </head>
+
+    <body>
+        <!-- header content -->
+        <header class="ui container">
+            <!-- header image -->
+            <a href="https://krgamestudios.com">
+                <img src="https://krgamestudios.com/img/logo_400x400.png" alt="KR Game Studios" class="ui left tiny image logoMargin" />
+            </a>
+        </header>
+
+        <div class="ui container">
+        <!-- navigation buttons -->
+            <div class="five ui buttons">
+                <a href="/games.html" class="ui button centered noPadding">Games</a>
+                <a href="/coding.html" class="ui button centered noPadding">Coding</a>
+                <a href="/homebrew.html" class="ui button centered noPadding">Homebrew</a>
+                <a href="/gallery.html" class="ui button centered noPadding">Gallery</a>
+                <a href="/about.html" class="ui button centered noPadding">About</a>
+            </div>
+        </div>
+
+        <!-- body content -->
+        <div class="ui container">
+    
+            <!-- links -->
+            <div class="ui container" style="margin-top: 1em">
+                <a href="https://facebook.com/KRGameStudios"><img src="https://en.facebookbrand.com/wp-content/uploads/2016/05/FB-fLogo-Blue-broadcast-2.png" alt="Facebook" width="32" height="32"></a>
+                <a href="https://twitter.com/KRGameStudios"><img src="https://krgamestudios.com/img/twitter.png" alt="Twitter" width="32" height="32"></a>
+                <a href="https://github.com/KRGameStudios"><img src="https://krgamestudios.com/img/github.png" alt="Github" width="32" height="32"></a>
+                <a href="https://discord.gg/FQmz8TN"><img src="https://krgamestudios.com/img/discord.png" alt="Discord" width="32" height="32"></a>
+            </div>
+
+            <h1>%UNITY_CUSTOM_HEADER%</h1>
+    
+            <div class="ui raised segment" style="display: flex; justify-content: center;">
+                <div style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;" id="content">
+                    <div id="unityPlayer">
+                        <div class="missing">
+                            <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now!">
+                                <img alt="Unity Web Player. Install now!" src="http://webplayer.unity3d.com/installation/getunity.png" width="193" height="63" />
+                            </a>
+                        </div>
+                        <div class="broken">
+                            <a href="http://unity3d.com/webplayer/" title="Unity Web Player. Install now! Restart your browser after install.">
+                                <img alt="Unity Web Player. Install now! Restart your browser after install." src="http://webplayer.unity3d.com/installation/getunityrestart.png" width="193" height="63" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer content -->
+        <footer>
+            <p>Copyright %UNITY_CUSTOM_COPYRIGHT%, <a href="http://krgamestudios.com">KR Game Studios</a> %UNITY_CUSTOM_COPYRIGHT_YEAR%</p>
+        </footer>
+
+        <!-- javascript -->
+        <script>
+            var gameInstance = UnityLoader.instantiate("content", "%UNITY_WEBGL_BUILD_URL%");
+        </script>
+    </body>
+</html>
